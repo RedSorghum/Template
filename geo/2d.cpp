@@ -83,8 +83,7 @@ db binary_search(db l,db r,db s,func f,int o,int t=0){
 		else if(sgn(f(.5*(l+r))-s)==o)r=.5*(l+r);
 		else l=.5*(l+r);}return .5*(l+r);}
 
-struct vec{
-	vec(){}
+struct vec{vec(){}
 	vec(int O){cin>>x>>y;len=hypot(x,y),ang=atan2(y,x);}
 	vec(db X,db Y):x(X),y(Y),len(hypot(X,Y)),ang(atan2(Y,X)){}
 	vec(db T,db R,int o):x(R*cosl(T)),y(R*sinl(T)),len(R),ang(atan2(y,x)){};
@@ -105,8 +104,7 @@ struct vec{
 		return !sgn(v.x-x)&&!sgn(v.y-y);}
 	db x,y,len,ang;};
 
-struct line{
-	line(){}
+struct line{line(){}
 	line(vec a,vec b):s(a),t(b),d(b-a),A(b.y-a.y),B(a.x-b.x),C(b^a){assert(sgn(d.len));}
 	line(db a,db b,db c):A(a),B(b),C(c){
 		if(sgn(c)){
@@ -127,8 +125,7 @@ struct line{
 	bool operator==(line l){return sgn(d.ang-l.d.ang)==0;}
 	vec s,t,d;db A,B,C;};
 
-struct cir{
-	cir(){};
+struct cir{cir(){};
 	cir(db X,db Y,db R):x(X),y(Y),r(R),o(vec(X,Y)){};
     cir(vec O,db R):x(O.x),y(O.y),r(R),o(O){};
     bool on(vec p){return sgn((p-o).len-r)==0;}
