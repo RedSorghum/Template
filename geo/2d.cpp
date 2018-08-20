@@ -41,13 +41,13 @@ db det(mat v){
 			rep(k,i,sz(v))v[j][k]-=v[i][k]*c;}}
 	rep(i,0,sz(v))ans*=v[i][i];return ans;}
 
-bool cramer(mat a,vector<db> c,vector<db>& x){
+bool cramer(mat a,vector<db>& c,vector<db>& x){
 	db da=det(a);mat t;x.clear();
 	rep(i,0,sz(a)){
 		t=a;rep(j,0,sz(a))t[j][i]=c[j];x.pb(det(t)/da);}
 	return sz(x)==sz(a);}
 
-vector<db> quadratic(db a,db b,db c){
+vector<db> quadratic(db& a,db& b,db& c){
 	db d=b*b-4.*a*c;vector<db> r;
 	if(sgn(d)==0)r.pb(-.5*b/a);
 	if(sgn(d)>0)r.pb(.5*(sqrt(d)-b)/a),r.pb(.5*(-sqrt(d)-b)/a);
@@ -93,10 +93,8 @@ struct vec{vec(){}
 	vec norm(){assert(sgn(len));return vec(x/len,y/len);}
 	vec trunc(db l){assert(sgn(len));return *this*(l/len);}
 	vec rot(db t){return vec(len*cos(ang+t),len*sin(ang+t));}//left
-	bool operator<(const vec& v)const{
-		return sgn(x-v.x)<0||(!sgn(v.x-x)&&sgn(y-v.y)<0);}
-	bool operator==(const vec& v)const{
-		return !sgn(v.x-x)&&!sgn(v.y-y);}
+	bool operator<(vec& v){return sgn(x-v.x)<0||(!sgn(v.x-x)&&sgn(y-v.y)<0);}
+	bool operator==(vec& v){return !sgn(v.x-x)&&!sgn(v.y-y);}
 	db x,y,len,ang;};
 
 struct line{line(){}
@@ -115,8 +113,7 @@ struct line{line(){}
 	bool on(vec p){return !sgn((s-p)^(t-p))&&sgn((s-p)*(t-p))<1;}
 	int pos(vec p){return sgn((s-p)^(t-p));}//left +|right -
 	vec proj(vec p){return p-~d.trunc(dis(p));}
-	bool operator<(line l){return sgn(d.ang-l.d.ang)<0||
-								(!sgn(d.ang-l.d.ang)&&pos(l.s)<0);}
+	bool operator<(line& l){return sgn(d.ang-l.d.ang)<0||(!sgn(d.ang-l.d.ang)&&pos(l.s)<0);}
 	bool operator==(line l){return sgn(d.ang-l.d.ang)==0;}
 	vec s,t,d;db A,B,C;};
 
@@ -127,7 +124,7 @@ struct cir{cir(){};
 	db x,y,r;vec o;};
 
 //strict X|touch T|end L|inf I|connect C|no N
-int cross_judge(line p,line q){
+int cross_judge(line& p,line& q){
 	int a=sgn((p.s^p.t)+(p.t^q.s)+(q.s^p.s))*sgn((p.s^p.t)+(p.t^q.t)+(q.t^p.s));
 	int b=sgn((q.s^q.t)+(q.t^p.s)+(p.s^q.s))*sgn((q.s^q.t)+(q.t^p.t)+(p.t^q.s));
 	if(a+b==-2)return 'X';if(a+b==-1)return 'T';
@@ -138,12 +135,12 @@ int cross_judge(line p,line q){
 	if(in||on==2)return 'I';if(on)return 'C';return 'N';}
 
 //has 1|no or inf 0
-int intersect_point(line p,line q,vec& v){
+int intersect_point(line& p,line& q,vec& v){
 	db d=p.B*q.A-p.A*q.B,x=p.C*q.B-p.B*q.C,y=p.A*q.C-p.C*q.A;
 	if(!sgn(d))return 0;v=vec(x/d,y/d);return 1;}
 
 //fast
-vec isp(line p,line q){
+vec isp(line& p,line& q){
 	return vec((p.C*q.B-p.B*q.C)/(p.B*q.A-p.A*q.B),(p.A*q.C-p.C*q.A)/(p.B*q.A-p.A*q.B));}
 
 //number of points
@@ -167,7 +164,7 @@ int intersect_point(vector<line> l,vector<vec>& v){
 }
 
 //no same point|on boarder
-bool in_convex_hull(vec p,vector<vec> v){
+bool in_convex_hull(vec& p,vector<vec>& v){
 	if(sz(v)==1)return p==v[0];
 	int cnt[2]={0,0};
 	rep(i,0,sz(v)){
@@ -218,7 +215,7 @@ db nearest_pair(int l,int r,vector<vec>& v){
 	int m=(l+r)>>1;db x=v[m].x;vector<vec> p;
 	db sol=min(nearest_pair(l,m,v),nearest_pair(m+1,r,v));
 	inplace_merge(v.begin()+l,v.begin()+m+1,v.begin()+r+1,[](vec a,vec b){return a.y<b.y;});
-	rep(i,l,r+1)if(fabsl(v[i].x-x)<=sol)p.pb(v[i]);
+	rep(i,l,r+1)if(fabs(v[i].x-x)<=sol)p.pb(v[i]);
 	rep(i,0,sz(p))rep(j,i+1,sz(p)){
         if(p[j].y-p[i].y>=sol)break;
         sol=min(sol,(p[i]-p[j]).len);}
@@ -231,15 +228,15 @@ db nearest_pair(vector<vec>& v){
 db get_area(db r,vec& a,vec& b){
 	db la=max(a.len,b.len),li=min(a.len,b.len),l=(a-b).len;
 	if(!sgn(la)||!sgn(li)||!sgn(l))return 0.;
-	db t=acosl((a*b)/(la*li)),d=fabsl(a^b)/l;vec c=b-a;
+	db t=acosl((a*b)/(la*li)),d=fabs(a^b)/l;vec c=b-a;
 	if(d>=r)return .5*r*r*t;
-	if(la<=r)return .5*la*li*sinl(t);
+	if(la<=r)return .5*la*li*sin(t);
 	if(li<=r){
-		db ot=acosl(d/la)-acosl(d/r),it=t-ot;
+		db ot=acos(d/la)-acos(d/r),it=t-ot;
 		return .5*r*r*ot+.5*r*li*sinl(it);}
 	if(sgn((a*c)*(b*c))==-1){
-		db it=2.*acosl(d/r),ot=t-it;
-		return .5*r*r*ot+.5*r*r*sinl(it);}
+		db it=2.*acos(d/r),ot=t-it;
+		return .5*r*r*ot+.5*r*r*sin(it);}
 	return .5*r*r*t;}
 
 //be careful with precision
@@ -247,7 +244,7 @@ db intersection_area(cir& c,vector<vec> p){
 	db area=0;rep(i,0,sz(p))p[i]=p[i]-c.o;
 	rep(i,0,sz(p))
 		area+=sgn(p[i]^p[(i+1)%sz(p)])*get_area(c.r,p[i],p[(i+1)%sz(p)]);
-	return fabsl(area);}
+	return fabs(area);}
 
 #define arc(a,b,c) acos((a*a+b*b-c*c)/(2.*a*b))
 #define seg(a,r) .5*r*r*(a-sin(a))
@@ -302,7 +299,7 @@ vec centroid(vector<vec>& v){
 		a+=v[i]^v[(i+1)%sz(v)];
 		cx+=(v[i].x+v[(i+1)%sz(v)].x)*(v[i]^v[(i+1)%sz(v)]);
 		cy+=(v[i].y+v[(i+1)%sz(v)].y)*(v[i]^v[(i+1)%sz(v)]);}
-	a=3.*fabsl(a);return vec(cx,cy)/a;}
+	a=3.*fabs(a);return vec(cx,cy)/a;}
 
 //o(n)
 cir minimal_circumcircle(vector<vec>& v){
@@ -387,3 +384,4 @@ vector<vec> circle_tangent(cir& c,cir& C){
 int main(){
 	cin.sync_with_stdio(false);cin.tie(0);
 	cout<<fixed;cout.precision(10);}
+
