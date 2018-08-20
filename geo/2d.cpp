@@ -333,7 +333,7 @@ vector<vec> half_plane_intersection(vector<line> l){
 	while(sz(c)&&q.front().pos(c.back())==-1)c.pop_back(),q.pop_back();
 	if(sz(q)<3)return v;c.pb(isp(q.front(),q.back()));
 	rep(i,0,sz(c))if(!sz(v)||!(c[i]==v.back()))v.pb(c[i]);
-	if(v.front()==v.back())v.pop_back();return v;}
+	if(sz(v)>1&&v.front()==v.back())v.pop_back();return v;}
 
 
 /*
