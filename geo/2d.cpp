@@ -23,7 +23,7 @@ const int inf = 0x3f3f3f3f;
 const ll infl = 4557430888798830399ll;
 const db infd = 1./0.;
 const db eps = 1e-10;
-const db pi = acosl(-1.);
+const db pi = acos(-1.);
 const ll mod = 1e9+7;
 
 int sgn(db x){return (x>eps)-(x<-eps);}
@@ -46,11 +46,6 @@ bool cramer(mat a,vector<db> c,vector<db>& x){
 	rep(i,0,sz(a)){
 		t=a;rep(j,0,sz(a))t[j][i]=c[j];x.pb(det(t)/da);}
 	return sz(x)==sz(a);}
-
-mat operator*(mat a,mat b){
-	int n=sz(a);mat c;c.resize(n,vector<db>(n));
-	rep(i,0,n)rep(j,0,n)rep(k,0,n)c[i][j]+=a[i][k]*b[k][j];
-	return c;}
 
 vector<db> quadratic(db a,db b,db c){
 	db d=b*b-4.*a*c;vector<db> r;
@@ -152,22 +147,19 @@ vec isp(line p,line q){
 	return vec((p.C*q.B-p.B*q.C)/(p.B*q.A-p.A*q.B),(p.A*q.C-p.C*q.A)/(p.B*q.A-p.A*q.B));}
 
 //number of points
-int intersect_point(line l,cir c,vector<vec>& v){
-	v.clear();db lo=fabsl(l.dis(c.o));
+int intersect_point(line& l,cir& c,vector<vec>& v){
+	v.clear();db lo=fabs(l.dis(c.o));
 	if(sgn(lo-c.r)>0)return 0;
 	if(sgn(lo-c.r)==0){v.pb(l.proj(c.o));return 1;}
-	db ld=sqrtl(c.r*c.r-lo*lo);vec p=l.proj(c.o);
+	db ld=sqrt(c.r*c.r-lo*lo);vec p=l.proj(c.o);
 	v.pb(p-l.d.trunc(ld));v.pb(p+l.d.trunc(ld));return 2;}
 
 //-1 inf
-int intersect_point(cir a,cir b,vector<vec>& v){
-	v.clear();if(a.o==b.o&&sgn(a.r-b.r)==0)return -1;
+int intersect_point(cir& a,cir& b,vector<vec>& v){
+    if(a.o==b.o)return abs(sgn(a.r-b.r))-1;
 	if(sgn((a.o-b.o).len-(a.r+b.r))>0)return 0;
-	line l=line(2.*(b.x-a.x),2.*(b.y-a.y),(a.o*a.o)-(b.o*b.o)-sq(a.r)+sq(b.r));
-	vector<vec> p;int n;
-	n=intersect_point(l,a,p);rep(i,0,n)if(a.on(p[i])&&b.on(p[i]))v.pb(p[i]);
-	n=intersect_point(l,b,p);rep(i,0,n)if(a.on(p[i])&&b.on(p[i]))v.pb(p[i]);
-	sort(all(v));v.erase(unique(all(v)),v.end());return sz(v);}
+    line l(2.*(b.x-a.x),2.*(b.y-a.y),sq(a.o)-sq(b.o)-sq(a.r)+sq(b.r));
+    return intersect_point(l,a,v);}
 
 //no vertical line
 int intersect_point(vector<line> l,vector<vec>& v){
@@ -232,11 +224,11 @@ db nearest_pair(int l,int r,vector<vec>& v){
         sol=min(sol,(p[i]-p[j]).len);}
 	return sol;}
 
-db nearest_pair(vector<vec> v){
+db nearest_pair(vector<vec>& v){
 	sort(all(v),[](vec a,vec b){return a.x<b.x;});
 	return nearest_pair(0,sz(v)-1,v);}
 
-db get_area(db r,vec a,vec b){
+db get_area(db r,vec& a,vec& b){
 	db la=max(a.len,b.len),li=min(a.len,b.len),l=(a-b).len;
 	if(!sgn(la)||!sgn(li)||!sgn(l))return 0.;
 	db t=acosl((a*b)/(la*li)),d=fabsl(a^b)/l;vec c=b-a;
@@ -251,7 +243,7 @@ db get_area(db r,vec a,vec b){
 	return .5*r*r*t;}
 
 //be careful with precision
-db intersection_area(cir c,vector<vec> p){
+db intersection_area(cir& c,vector<vec> p){
 	db area=0;rep(i,0,sz(p))p[i]=p[i]-c.o;
 	rep(i,0,sz(p))
 		area+=sgn(p[i]^p[(i+1)%sz(p)])*get_area(c.r,p[i],p[(i+1)%sz(p)]);
@@ -259,12 +251,11 @@ db intersection_area(cir c,vector<vec> p){
 
 #define arc(a,b,c) acos((a*a+b*b-c*c)/(2.*a*b))
 #define seg(a,r) .5*r*r*(a-sin(a))
-db union_area(vector<cir> c){
+db union_area(vector<cir>& c){
 	sort(all(c),[](cir a,cir b){return a.r>b.r;});
 	vector<cir> z;vector<vec> v;vector<pair<db,db> >itv;
 	bool cover;db d,a,ta,sa,ea,area=0.;vec t;
 	rep(i,0,sz(c)){
-		rep(k,0,sz(c)){cout<<c[k].x<<" "<<c[k].y<<endl;}
 		cover=false;
 		rep(j,0,sz(z))if(sgn((z[j].o-c[i].o).len-(z[j].r-c[i].r))<=0){
 			cover=true;break;}
@@ -289,23 +280,23 @@ db union_area(vector<cir> c){
 	return area;}
 
 //make sure not on same line
-vec circumcircle_center(vec a,vec b,vec c){
+vec circumcircle_center(vec& a,vec& b,vec& c){
     mat d={{a.x,a.y,1},{b.x,b.y,1.},{c.x,c.y,1.}};
     mat x={{sq(a.x)+sq(a.y),a.y,1.},{sq(b.x)+sq(b.y),b.y,1.},{sq(c.x)+sq(c.y),c.y,1.}};
     mat y={{a.x,sq(a.x)+sq(a.y),1.},{b.x,sq(b.x)+sq(b.y),1.},{c.x,sq(c.x)+sq(c.y),1.}};
     return vec(det(x),det(y))/(2.*det(d));}
 
-vec incircle_center(vec a,vec b,vec c){
+vec incircle_center(vec& a,vec& b,vec& c){
 	db A=(b-c).len,B=(a-c).len,C=(a-b).len;
 	return (a*A+b*B+c*C)/(A+B+C);}
 
-vec ortho_center(vec a,vec b,vec c){
+vec ortho_center(vec& a,vec& b,vec& c){
 	mat d={{a.x,a.y,1.},{b.x,b.y,1.},{c.x,c.y,1.}};
 	mat x={{b*c,1.,a.y},{c*a,1.,b.y},{a*b,1.,c.y}};
 	mat y={{b*c,a.x,1.},{c*a,b.x,1.},{a*b,c.x,1.}};
 	return vec(det(x),det(y))/(2.*det(d));}
 
-vec centroid(vector<vec> v){
+vec centroid(vector<vec>& v){
 	db a=0.,cx=0.,cy=0.;
 	rep(i,0,sz(v)){
 		a+=v[i]^v[(i+1)%sz(v)];
@@ -314,7 +305,7 @@ vec centroid(vector<vec> v){
 	a=3.*fabsl(a);return vec(cx,cy)/a;}
 
 //o(n)
-cir minimal_circumcircle(vector<vec> v){
+cir minimal_circumcircle(vector<vec>& v){
     random_shuffle(all(v));cir c=cir(v[0],0.);
     rep(i,1,sz(v)){
         if((v[i]-c.o).len<=c.r)continue;
@@ -382,7 +373,7 @@ void delauny_triangulation(vector<vec> v)
 */
 
 //guaranteed outer|5 vec|c.r<C.r
-vector<vec> circle_tangent(cir c,cir C){
+vector<vec> circle_tangent(cir& c,cir& C){
 	db a=(C.o-c.o).ang;
 	db t=asin((C.r-c.r)/(c.o-C.o).len);
 	vector<vec> v;
