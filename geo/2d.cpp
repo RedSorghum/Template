@@ -213,13 +213,11 @@ struct dynamic_convex_hull
 db nearest_pair(int l,int r,vector<vec>& v){
 	if(l==r)return infd;
 	int m=(l+r)>>1;db x=v[m].x;vector<vec> p;
-	db sol=min(nearest_pair(l,m,v),nearest_pair(m+1,r,v));
+	db D=min(nearest_pair(l,m,v),nearest_pair(m+1,r,v));
 	inplace_merge(v.begin()+l,v.begin()+m+1,v.begin()+r+1,[](vec a,vec b){return a.y<b.y;});
-	rep(i,l,r+1)if(fabs(v[i].x-x)<=sol)p.pb(v[i]);
-	rep(i,0,sz(p))rep(j,i+1,sz(p)){
-        if(p[j].y-p[i].y>=sol)break;
-        sol=min(sol,(p[i]-p[j]).len);}
-	return sol;}
+	rep(i,l,r+1)if(fabs(v[i].x-x)<=D)p.pb(v[i]);
+	rep(i,0,sz(p))rep(j,i+1,sz(p)){if(p[j].y-p[i].y>=D)break;D=min(D,(p[i]-p[j]).len);}
+	return D;}
 
 db nearest_pair(vector<vec>& v){
 	sort(all(v),[](vec a,vec b){return a.x<b.x;});
