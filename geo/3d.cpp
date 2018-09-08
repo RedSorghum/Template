@@ -161,8 +161,4 @@ int intersect_line(plane& p,plane& q,line& l){
 
 int main(){
 	cin.sync_with_stdio(false);cin.tie(0);
-	cout<<fixed;cout.precision(10);
-    vec a=vec(0),b=vec(0),c=vec(0);
-    db r;cin>>r;
-    
-}
+	cout<<fixed;cout.precision(10);}
