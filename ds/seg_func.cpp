@@ -23,7 +23,7 @@ namespace seg_func{
 
 namespace seg_func_p{
     const int maxn=10;
-	struct E{E(){S=0;ch[0]=ch[1]=NULL;};int S;E* ch[2];}*T[maxn];
+    struct E{E(){S=0;ch[0]=ch[1]=NULL;};int S;E* ch[2];}*T[maxn];
     void init(){T[0]=new E();T[0]->ch[0]=T[0]->ch[1]=T[0];}
     void upd(E* u){u->S=u->ch[0]->S+u->ch[1]->S;}
     E* upd(E* u,int l,int r,map<int,int>& p){
