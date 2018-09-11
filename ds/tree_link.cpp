@@ -7,7 +7,7 @@ using namespace std;
 #define pb push_back
 
 namespace tree_link{
-    const int maxn=10;
+	const int maxn=10;
 	vector<int> N[maxn],q;
 	int fa[maxn],so[maxn],sz[maxn],u,v,ms,id;
 	int tp[maxn],bd[maxn],od[maxn],uod[maxn],dpth[maxn];
