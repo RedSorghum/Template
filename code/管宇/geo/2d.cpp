@@ -317,7 +317,6 @@ cir minimal_circumcircle(vector<vec>& v){
 //left area|add boarder when necessary
 //vec z=vec(1e10,1e10);rep(i,0,4)l.pb(line(z,z.rot(.5*pi))),z=z.rot(.5*pi);
 vector<vec> half_plane_intersection(vector<line> l){
-	vec z=vec(200,200);rep(i,0,4)l.pb(line(z,z.rot(.5*pi))),z=z.rot(.5*pi);
 	deque<vec> c;deque<line> q;vector<vec> v;
 	sort(all(l));l.erase(unique(all(l)),l.end());
 	rep(i,0,sz(l)){
@@ -329,43 +328,6 @@ vector<vec> half_plane_intersection(vector<line> l){
 	if(sz(q)<3)return v;c.pb(isp(q.front(),q.back()));
 	rep(i,0,sz(c))if(!sz(v)||!(c[i]==v.back()))v.pb(c[i]);
 	if(sz(v)>1&&v.front()==v.back())v.pop_back();return v;}
-
-
-/*
-void delauny_triangulation(int l,int r,vector<vec>& v,vector<vector<int> >& u)
-{
-	if(r-l<=2){rep(i,l,r)repb(j,l,r)if(i!=j)u[i].pb(j);return;}
-	int m=(l+r)>>1,lid=l,rid=r,pl,pr,op;
-	delauny_triangulation(l,m,v,u);delauny_triangulation(m+1,r,v,u);
-	
-	for(;pl!=lid||pr!=rid;){
-		for(auto nlid:u[lid]){
-			op=judge(v[lid],v[nlid],v[rid]);
-			if(op==1||(op==0&&(v[nlid]-v[rid]).len<(v[lid]-v[rid]).len)){
-				pl=lid;lid=nlid;break;}}
-		for(auto nrid:u[rid]){
-			op=judge(v[lid],v[nrid],v[rid]);
-			if(op==1||(op==0&&(v[nrid]-v[lid]).len<(v[rid]-v[lid]).len)){
-				pr=rid;rid=nrid;break;}}}
-	for(pl=pr=0;pl!=lid||pr!=rid;){	
-		for(auto nlid:u[lid]{
-			if(judge(v[lid],v[nlid],v[rid])==-1&&
-				(!op||in_circle(v[lid],v[op],v[rid],v[nlid])))op=nlid;}
-		for(auto nrid:u[rid]){
-			if(judge(v[lid],v[nrid],v[rid])==-1&&
-				(!op||in_circle(v[lid],v[op],v[rid],v[nrid])))op=nrid;}
-		if(!op)break;
-	}
-		
-}
-
-void delauny_triangulation(vector<vec> v)
-{
-	sort(all(v));
-	vector<vector<int> > u;u.resize(sz(v));
-	delauny_triangulation(0,sz(v)-1,v,u);
-}
-*/
 
 //guaranteed outer|5 vec|c.r<C.r
 vector<vec> circle_tangent(cir& c,cir& C){
