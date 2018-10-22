@@ -31,11 +31,11 @@ struct BCC{
 
 
 //原图点从1到n，使用init初始化点数n与图N
-//使用run运行，生成点联通分量数目m，各点联通分量存储在D[1,m]中
+//使用run运行，生成点联通分量数目m，各点联通分量存储在D[1,m]中，默认使用gen生成对应边数信息存储在e[1,m]
 //割点存储在cut中
 struct DCC{
 	DCC(){init(0,0);}
-	int n,t,m,dfn[maxn],low[maxn],s[maxn];
+	int n,t,m,dfn[maxn],low[maxn],s[maxn],e[maxn];
 	vector<int>*N,cut,D[maxn];
 	void init(int _n,vector<int>* _N){
 		n=_n;N=_N;t=-1;m=0;mst(dfn,0);mst(low,0);cut.clear();}
@@ -49,4 +49,9 @@ struct DCC{
 					m+=1;D[m].clear();D[m].pb(u);
 					do D[m].pb(s[t]);while(s[t--]!=v);}}
 			else if(v!=p||sec++)low[u]=min(low[u],dfn[v]);}}
-	void run(){repb(i,1,n)if(!dfn[i])dfs(i,1,0);}};
+	void run(){repb(i,1,n)if(!dfn[i])dfs(i,1,0);gen();}
+	void gen(){
+		mst(s,-1);mst(e,0);
+		repb(i,1,m){
+			for(auto j:D[i])s[j]=i;
+			for(auto j:D[i])for(auto k:N[j])if(s[k]==i)e[i]+=1;}}};
