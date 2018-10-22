@@ -28,4 +28,5 @@ int main()
     BS.any();//BS!=0
     BS.none();//BS==0
     BS.count();//__builtin_popcount(BS)
+    
 }
