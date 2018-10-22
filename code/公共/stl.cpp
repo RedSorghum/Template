@@ -17,4 +17,15 @@ int main()
     
     priority_queue<int,vector<int>,greater<int> >Q1;//1 2 3
     priority_queue<int,vector<int>,less<int> >Q2;//3 2 1
+
+    bitset<10> BS;int p,v;
+    BS.reset();//clear
+    BS.set();//BS=~0
+    BS.set(p,v);//BS|=v<<p
+    BS.flip(p);//BS^=1<<p
+    BS.test(p);//(BS>>p)&1
+    BS.all();//BS==~0
+    BS.any();//BS!=0
+    BS.none();//BS==0
+    BS.count();//__builtin_popcount(BS)
 }
